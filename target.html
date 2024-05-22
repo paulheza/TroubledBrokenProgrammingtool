@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+</head>
+<body>
+
+<h2>Your Previous Purchases</h2>
+
+<table>
+  <tr>
+    <th>Purchased Item</th>
+    <th>Quantity</th>
+    <th>Date of Purchase</th>
+  </tr>
+  <tr>
+    <td>JBL Live 650BTNC Wireless Headphones</td>
+    <td>1</td>
+    <td>20/07/2013</td>
+  </tr>
+  <tr>
+    <td>Galaxy Buds Live</td>
+    <td>2</td>
+    <td>18/03/2015</td>
+  </tr>
+  <tr>
+    <td>Sony Noise Cancelling Headphones</td>
+    <td>1</td>
+    <td>18/07/2016</td>
+  </tr>
+  <tr>
+    <td>Beats Solo3</td>
+    <td>3</td>
+    <td>13/01/2018</td>
+  </tr>
+  <tr>
+    <td>Airpods 2nd Gen</td>
+    <td>2</td>
+    <td>26/02/2020</td>
+  </tr>
+  <tr>
+    <td>Sony WF-C500 Earbuds</td>
+    <td>1</td>
+    <td>07/10/2021</td>
+  </tr>
+</table>
+
+Purchased Item<br>  <input id="purchaseIn"/>
+    <br>
+    Quantity<br> <input id = "quantityIn" />
+    <br>
+    Date of Purchase<br> <input id = "dateIn" />
+    <br>
+    <input type="checkbox" name="vehicle3" value="Boat" checked> I'm not a robot<br><br>
+
+    <button onclick="clickMe()"> Add Data </button>
+    <br>
+
+
+    <div id ="myTable"> </div>
+
+  
+
+</body>
+</html>
+
+<script src="https://www.gstatic.com/firebasejs/8.4.1/firebase.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+
+
+
+<script>
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+  apiKey: "AIzaSyCsjXw-iGWDH45vWEBhKp7dHDqP9Kk2zW4",
+  authDomain: "tempc2.firebaseapp.com",
+  databaseURL: "https://tempc2-default-rtdb.firebaseio.com",
+  projectId: "tempc2",
+  storageBucket: "tempc2.appspot.com",
+  messagingSenderId: "727873887087",
+  appId: "1:727873887087:web:224de6c8fc4d1ec2dda69a"
+};
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+</script>
+
+
+
+
+
+<script>
+  //adding list
+  purchasesList = [];
+  quantitysList = [];
+  datesList = [];
+
+
+  function clickMe(){
+    var purchaseData = document.getElementById("purchaseIn").value;
+    var quantityData = document.getElementById("quantityIn").value;
+
+    var dateData = document.getElementById("dateIn").value;
+
+    var myDB = firebase.database().ref();
+    var sendData = myDB.child('Customer/Purchases').push();
+    sendData.set(
+      {
+        purchase: purchaseData,
+        quantity: quantityData,
+        date: dateData
+      });
+
+  }
+
+  var myDB = firebase.database().ref('Customer/Purchases');
+
+  myDB.on("child_added", function(data, prevChildKey)
+
+          { 
+    var dataPoint = data.val();
+
+    purchasesList.push(dataPoint.purchase);
+    quantitysList.push(dataPoint.quantity);
+    datesList.push(dataPoint.date);
+
+    createTable();
+
+  });
+
+
+  function createTable(){
+
+    var myData = "<b>Purchases</b>  <b>Quantity</b> <b> Date</b> <br>";
+
+    for(index=0;index<purchasesList.length;index+=1){
+      myData += purchasesList[index] + " " + quantitysList[index] + " " + datesList[index]+ "<br>";
+
+    }
+    document.getElementById("myTable").innerHTML = myData;
+
+
+  }
+</script>

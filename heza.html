@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h2>My Temperature Levels</h2>
+    <div id="myDisplay">
+
+    </div>
+  </body>
+</html>
+
+<!-- Script 1  Import -->
+<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase.js"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+
+
+<!-- Script 2  Connection to FB -->
+<script>
+  //Connection
+  const firebaseConfig = {
+  apiKey: "AIzaSyCek8tMisEM-DNoVYLIWPEAk2nBAXO-SZA",
+  authDomain: "tempclass-10213.firebaseapp.com",
+  databaseURL: "https://tempclass-10213-default-rtdb.firebaseio.com",
+  projectId: "tempclass-10213",
+  storageBucket: "tempclass-10213.appspot.com",
+  messagingSenderId: "81472962690",
+  appId: "1:81472962690:web:2b059a58328153da72749b"
+};
+
+  firebase.initializeApp(firebaseConfig);
+</script>
+
+
+<!-- Script 3  My Code -->
+<script>
+  var myTemps = [];
+
+
+  // Event handler
+  var myFB = firebase.database().ref("ClassicMus");
+  myFB.on("child_added", newData);
+
+  function newData(data){
+      var record = data.val();
+      myTemps.push(record.TempLevel);
+      drawGraph();
+  }
+
+  function drawGraph(){
+      // data
+      var tempData = {
+        y: myTemps.slice(myTemps.length -50,myTemps.length - 1),
+        mode: 'lines+markers',
+        name: "Temperature of Classical Music"
+      };
+
+      // layout
+      var layout = {
+        title: 'Classical Music',
+        xaxis: { title: 'Time'},
+        yaxis: { title: 'Temperature'}
+      };
+
+
+      // Make graph
+      var data = [tempData]
+      Plotly.newPlot("myDisplay",data,layout);
+
+  }
+
+
+</script>
+
